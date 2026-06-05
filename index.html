@@ -1,0 +1,1320 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUXE INTERIORS — Design Consultation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        playfair: ['Playfair Display', 'serif'],
+        inter: ['Inter', 'sans-serif'],
+      },
+      colors: {
+        cream: '#FAF7F2',
+        sand: '#E8E0D4',
+        warmgray: '#A89F94',
+        charcoal: '#2C2C2C',
+        espresso: '#3E3229',
+        gold: '#C4A265',
+        goldlight: '#D4B87A',
+        linen: '#F5F0EA',
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #FAF7F2;
+    color: #2C2C2C;
+    overflow-x: hidden;
+  }
+  .font-playfair { font-family: 'Playfair Display', serif; }
+  .font-inter { font-family: 'Inter', sans-serif; }
+
+  /* Progress bar */
+  .progress-fill {
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Step transitions */
+  .step-container {
+    position: relative;
+    min-height: 500px;
+  }
+  .step {
+    display: none;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .step.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeSlideIn 0.5s ease forwards;
+  }
+  .step.exit-left {
+    animation: fadeSlideOutLeft 0.4s ease forwards;
+  }
+  .step.exit-right {
+    animation: fadeSlideOutRight 0.4s ease forwards;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideOutLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-60px); }
+  }
+  @keyframes fadeSlideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(60px); }
+  }
+
+  /* Cards */
+  .option-card {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .option-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(196,162,101,0.08), rgba(196,162,101,0.02));
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .option-card:hover::before { opacity: 1; }
+  .option-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(44,44,44,0.1);
+  }
+  .option-card.selected {
+    border-color: #C4A265;
+    box-shadow: 0 8px 30px rgba(196,162,101,0.2);
+    transform: translateY(-4px);
+  }
+  .option-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: #C4A265;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes checkPop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  /* Multi-select */
+  .multi-card.selected {
+    border-color: #C4A265;
+    background: linear-gradient(135deg, #FDF9F0, #FAF0DE);
+    box-shadow: 0 6px 24px rgba(196,162,101,0.15);
+  }
+  .multi-card.selected .check-circle {
+    background: #C4A265;
+    border-color: #C4A265;
+    color: white;
+  }
+
+  /* Custom input */
+  .custom-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #E8E0D4;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    background: white;
+    transition: all 0.3s ease;
+    color: #2C2C2C;
+  }
+  .custom-input:focus {
+    outline: none;
+    border-color: #C4A265;
+    box-shadow: 0 0 0 4px rgba(196,162,101,0.1);
+  }
+  .custom-input::placeholder { color: #A89F94; }
+
+  /* Color swatch */
+  .color-swatch {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+    position: relative;
+  }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.selected {
+    border-color: #2C2C2C;
+    transform: scale(1.15);
+  }
+  .color-swatch.selected::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  /* Upload area */
+  .upload-area {
+    border: 2px dashed #C4A265;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+  }
+  .upload-area:hover, .upload-area.dragover {
+    background: linear-gradient(135deg, rgba(196,162,101,0.05), rgba(196,162,101,0.1));
+    border-color: #B8945A;
+    transform: scale(1.01);
+  }
+  .upload-area.dragover {
+    box-shadow: 0 0 0 4px rgba(196,162,101,0.15);
+  }
+
+  .upload-preview {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #E8E0D4;
+  }
+
+  /* Budget slider */
+  .budget-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #E8E0D4, #C4A265);
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  .budget-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #C4A265;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(196,162,101,0.4);
+    transition: all 0.3s ease;
+  }
+  .budget-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px rgba(196,162,101,0.5);
+  }
+  .budget-slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #C4A265;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 15px rgba(196,162,101,0.4);
+  }
+
+  /* Navigation buttons */
+  .nav-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav-btn:hover { transform: translateY(-2px); }
+  .nav-btn:active { transform: translateY(0); }
+  .nav-btn-primary {
+    background: linear-gradient(135deg, #C4A265, #B8945A);
+    color: white;
+    box-shadow: 0 6px 20px rgba(196,162,101,0.3);
+  }
+  .nav-btn-primary:hover {
+    box-shadow: 0 8px 28px rgba(196,162,101,0.45);
+  }
+  .nav-btn-secondary {
+    background: transparent;
+    color: #A89F94;
+    border: 2px solid #E8E0D4;
+  }
+  .nav-btn-secondary:hover {
+    border-color: #C4A265;
+    color: #2C2C2C;
+  }
+
+  /* Success animation */
+  @keyframes successPulse {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .success-check {
+    animation: successPulse 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 100;
+    animation: confetti-fall linear forwards;
+  }
+
+  /* Style image cards */
+  .style-image-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    border: 3px solid transparent;
+  }
+  .style-image-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(44,44,44,0.15);
+  }
+  .style-image-card.selected {
+    border-color: #C4A265;
+    box-shadow: 0 12px 36px rgba(196,162,101,0.25);
+  }
+  .style-image-card .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 16px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    color: white;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.4s ease;
+  }
+  .style-image-card:hover .overlay {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .style-image-card.selected .overlay {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Floating label style */
+  .input-group { position: relative; margin-bottom: 20px; }
+  .input-group label {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    font-size: 15px;
+    color: #A89F94;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: white;
+    padding: 0 6px;
+  }
+  .input-group input:focus + label,
+  .input-group input:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 12px;
+    color: #C4A265;
+    font-weight: 500;
+  }
+
+  /* Pulse animation for active step indicator */
+  @keyframes subtlePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(196,162,101,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(196,162,101,0); }
+  }
+  .step-dot.active {
+    animation: subtlePulse 2s infinite;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #FAF7F2; }
+  ::-webkit-scrollbar-thumb { background: #C4A265; border-radius: 3px; }
+
+  /* Textarea */
+  .custom-textarea {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #E8E0D4;
+    border-radius: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    background: white;
+    transition: all 0.3s ease;
+    color: #2C2C2C;
+    resize: vertical;
+    min-height: 180px;
+    line-height: 1.7;
+  }
+  .custom-textarea:focus {
+    outline: none;
+    border-color: #C4A265;
+    box-shadow: 0 0 0 4px rgba(196,162,101,0.1);
+  }
+  .custom-textarea::placeholder { color: #A89F94; }
+
+  /* Summary card */
+  .summary-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(44,44,44,0.08);
+    overflow: hidden;
+  }
+  .summary-item {
+    padding: 16px 24px;
+    border-bottom: 1px solid #F0EBE4;
+  }
+  .summary-item:last-child { border-bottom: none; }
+
+  /* Grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Number input arrows hide */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  /* Transition utility */
+  .transition-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+</style>
+</head>
+<body class="min-h-screen bg-cream">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-xl border-b border-sand/50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-br from-gold to-goldlight rounded-lg flex items-center justify-center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-playfair text-xl font-semibold text-charcoal tracking-wide">LUXE</h1>
+        <p class="text-[10px] text-warmgray tracking-[0.3em] uppercase -mt-0.5">Interiors</p>
+      </div>
+    </div>
+    <div class="text-sm text-warmgray font-inter hidden sm:block">
+      <span class="text-gold font-semibold" id="stepCounter">Step 1</span> of 9
+    </div>
+  </div>
+</header>
+
+<!-- Progress Bar -->
+<div class="fixed top-16 left-0 right-0 z-40 bg-white/50 backdrop-blur-sm">
+  <div class="h-1 bg-sand/30">
+    <div id="progressBar" class="progress-fill h-full bg-gradient-to-r from-gold to-goldlight rounded-r-full" style="width: 11.11%"></div>
+  </div>
+  <!-- Step dots -->
+  <div class="max-w-6xl mx-auto px-6 py-3 hidden md:flex items-center justify-between">
+    <div class="flex items-center gap-0 w-full">
+      <div class="flex-1 flex items-center" id="dotsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main class="pt-32 sm:pt-36 pb-32 px-4 sm:px-6 min-h-screen">
+  <div class="max-w-4xl mx-auto">
+    <div class="step-container" id="stepContainer">
+
+      <!-- STEP 1: Project Type -->
+      <div class="step active" data-step="1">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Getting Started</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">What are we designing?</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Select the type of space you'd like to transform into something extraordinary.</p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div class="option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="projectType" data-value="Apartment" onclick="selectOption(this)">
+            <div class="w-14 h-14 mx-auto mb-4 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm mb-1">Apartment</h3>
+            <p class="text-warmgray text-xs">Modern living</p>
+          </div>
+          <div class="option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="projectType" data-value="Villa" onclick="selectOption(this)">
+            <div class="w-14 h-14 mx-auto mb-4 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm mb-1">Villa</h3>
+            <p class="text-warmgray text-xs">Luxury residence</p>
+          </div>
+          <div class="option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="projectType" data-value="Office" onclick="selectOption(this)">
+            <div class="w-14 h-14 mx-auto mb-4 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="11" x2="12" y2="17"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm mb-1">Office</h3>
+            <p class="text-warmgray text-xs">Professional space</p>
+          </div>
+          <div class="option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="projectType" data-value="Retail Store" onclick="selectOption(this)">
+            <div class="w-14 h-14 mx-auto mb-4 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm mb-1">Retail Store</h3>
+            <p class="text-warmgray text-xs">Brand experience</p>
+          </div>
+          <div class="option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="projectType" data-value="Restaurant/Cafe" onclick="selectOption(this)">
+            <div class="w-14 h-14 mx-auto mb-4 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm mb-1">Restaurant / Café</h3>
+            <p class="text-warmgray text-xs">Hospitality</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Space Details -->
+      <div class="step" data-step="2">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Space Details</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Tell us about the space</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Help us understand the dimensions and location of your project.</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm max-w-2xl mx-auto">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-charcoal mb-2">Number of Rooms</label>
+              <div class="flex items-center gap-3">
+                <button onclick="adjustValue('rooms', -1)" class="w-12 h-12 rounded-xl bg-linen hover:bg-sand/50 flex items-center justify-center text-charcoal transition-smooth">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <input type="number" id="rooms" class="custom-input text-center text-xl font-medium" value="2" min="1" max="50">
+                <button onclick="adjustValue('rooms', 1)" class="w-12 h-12 rounded-xl bg-linen hover:bg-sand/50 flex items-center justify-center text-charcoal transition-smooth">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-charcoal mb-2">Area Size (sq ft)</label>
+              <input type="number" id="areaSize" class="custom-input text-center text-xl font-medium" placeholder="e.g. 2000" value="">
+            </div>
+          </div>
+          <div class="mt-6">
+            <label class="block text-sm font-medium text-charcoal mb-2">Project Location</label>
+            <input type="text" id="projectLocation" class="custom-input" placeholder="e.g. Mumbai, Maharashtra">
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Design Style -->
+      <div class="step" data-step="3">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Design Style</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">What inspires you?</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Choose the aesthetic that resonates with your vision.</p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Modern" onclick="selectOption(this)" style="background: linear-gradient(135deg, #E8E0D4, #D4C8B8);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#8B7E6E" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Modern</h3>
+              <p class="text-white/70 text-xs mt-1">Clean lines & open spaces</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Minimalist" onclick="selectOption(this)" style="background: linear-gradient(135deg, #F5F0EA, #EDE6DB);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#8B7E6E" stroke-width="1"><circle cx="12" cy="12" r="9"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Minimalist</h3>
+              <p class="text-white/70 text-xs mt-1">Less is more</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Contemporary" onclick="selectOption(this)" style="background: linear-gradient(135deg, #D6CFC4, #C4BAA8);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#8B7E6E" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Contemporary</h3>
+              <p class="text-white/70 text-xs mt-1">Current trends & art</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Scandinavian" onclick="selectOption(this)" style="background: linear-gradient(135deg, #EDE8E0, #DDD5C8);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#8B7E6E" stroke-width="1"><path d="M17 10c0-3-2.5-5-5-8C9.5 5 7 7 7 10c0 4 5 8 5 8s5-4 5-8z"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Scandinavian</h3>
+              <p class="text-white/70 text-xs mt-1">Cozy & functional</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Luxury" onclick="selectOption(this)" style="background: linear-gradient(135deg, #3E3229, #5A4D3E);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Luxury</h3>
+              <p class="text-white/70 text-xs mt-1">Opulence & elegance</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Industrial" onclick="selectOption(this)" style="background: linear-gradient(135deg, #A89F94, #8B8076);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D4C8B8" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="1"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Industrial</h3>
+              <p class="text-white/70 text-xs mt-1">Raw & urban</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl" data-field="designStyle" data-value="Traditional" onclick="selectOption(this)" style="background: linear-gradient(135deg, #C4B8A0, #B0A48A);">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6B5E4E" stroke-width="1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="overlay rounded-b-2xl">
+              <h3 class="font-playfair text-lg font-semibold">Traditional</h3>
+              <p class="text-white/70 text-xs mt-1">Classic & timeless</p>
+            </div>
+          </div>
+          <div class="style-image-card aspect-[4/5] rounded-2xl border-2 border-dashed border-sand flex items-center justify-center hover:border-gold" data-field="designStyle" data-value="Custom" onclick="selectOption(this)" style="background: white;">
+            <div class="text-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5" class="mx-auto mb-2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              <p class="text-sm text-gold font-medium">Something else</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Budget Range -->
+      <div class="step" data-step="4">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Budget</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Investment range</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Select the budget that aligns with your vision. This helps us curate the right options.</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm max-w-2xl mx-auto">
+          <div class="text-center mb-8">
+            <span class="text-4xl font-playfair text-charcoal font-semibold" id="budgetDisplay">₹5 – 15 Lakh</span>
+          </div>
+          <input type="range" class="budget-slider mb-8" id="budgetSlider" min="0" max="4" step="1" value="1" oninput="updateBudget(this.value)">
+          <div class="grid grid-cols-5 gap-2 text-center text-xs text-warmgray font-medium">
+            <span>&lt;5L</span>
+            <span>5–15L</span>
+            <span>15–30L</span>
+            <span>30–50L</span>
+            <span>50L+</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-8">
+            <div class="option-card bg-linen rounded-xl p-4 text-center text-sm font-medium" data-field="budget" data-value="Under ₹5 Lakh" onclick="selectBudget(this, 0)"><span class="text-xs text-warmgray">Under</span><br>₹5 Lakh</div>
+            <div class="option-card bg-linen rounded-xl p-4 text-center text-sm font-medium selected" data-field="budget" data-value="₹5 – 15 Lakh" onclick="selectBudget(this, 1)"><span class="text-xs text-warmgray">₹5 –</span><br>₹15 Lakh</div>
+            <div class="option-card bg-linen rounded-xl p-4 text-center text-sm font-medium" data-field="budget" data-value="₹15 – 30 Lakh" onclick="selectBudget(this, 2)"><span class="text-xs text-warmgray">₹15 –</span><br>₹30 Lakh</div>
+            <div class="option-card bg-linen rounded-xl p-4 text-center text-sm font-medium" data-field="budget" data-value="₹30 – 50 Lakh" onclick="selectBudget(this, 3)"><span class="text-xs text-warmgray">₹30 –</span><br>₹50 Lakh</div>
+            <div class="option-card bg-linen rounded-xl p-4 text-center text-sm font-medium" data-field="budget" data-value="₹50 Lakh +" onclick="selectBudget(this, 4)"><span class="text-xs text-warmgray">₹50</span><br>Lakh +</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Color Preferences -->
+      <div class="step" data-step="5">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Color Palette</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Color preferences</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Select up to 4 colors that speak to your aesthetic.</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm max-w-2xl mx-auto">
+          <div class="mb-8">
+            <p class="text-sm font-medium text-charcoal mb-4">Neutrals & Warm Tones</p>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <div class="color-swatch selected" style="background: #FAFAFA;" data-color="White" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #E8E0D4;" data-color="Beige" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #C4B8A0;" data-color="Sand" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #A89F94;" data-color="Warm Gray" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #2C2C2C;" data-color="Charcoal" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #3E3229;" data-color="Espresso" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #8B7E6E;" data-color="Taupe" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #D4C8B8;" data-color="Mushroom" onclick="selectColor(this)"></div>
+            </div>
+          </div>
+          <div class="mb-8">
+            <p class="text-sm font-medium text-charcoal mb-4">Accent Colors</p>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <div class="color-swatch" style="background: #C4A265;" data-color="Gold" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #7B9E87;" data-color="Sage" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #6B8FA3;" data-color="Steel Blue" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #B8856C;" data-color="Terracotta" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #D4B5A0;" data-color="Blush" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #4A6741;" data-color="Forest" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #8E7CC3;" data-color="Lavender" onclick="selectColor(this)"></div>
+              <div class="color-swatch" style="background: #C75B5B;" data-color="Rust" onclick="selectColor(this)"></div>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-charcoal mb-3">Selected colors</p>
+            <div id="selectedColors" class="flex flex-wrap gap-2 min-h-[40px]">
+              <span class="inline-flex items-center gap-1 px-3 py-1.5 bg-linen rounded-full text-xs font-medium text-charcoal">
+                <span class="w-3 h-3 rounded-full" style="background: #FAFAFA; border: 1px solid #E8E0D4;"></span> White ×
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: Furniture Requirements -->
+      <div class="step" data-step="6">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Furnishing</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">What do you need?</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Select all the areas where you need furniture.</p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+          <div class="multi-card option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="furniture" data-value="Living Room" onclick="toggleMulti(this)">
+            <div class="check-circle w-8 h-8 mx-auto mb-3 rounded-full border-2 border-sand flex items-center justify-center text-xs font-bold text-warmgray transition-smooth">✓</div>
+            <div class="w-12 h-12 mx-auto mb-3 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><path d="M5 12v-1a7 7 0 0114 0v1"/><rect x="2" y="12" width="20" height="6" rx="2"/><line x1="4" y1="18" x2="4" y2="22"/><line x1="20" y1="18" x2="20" y2="22"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm">Living Room</h3>
+          </div>
+          <div class="multi-card option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="furniture" data-value="Bedroom" onclick="toggleMulti(this)">
+            <div class="check-circle w-8 h-8 mx-auto mb-3 rounded-full border-2 border-sand flex items-center justify-center text-xs font-bold text-warmgray transition-smooth">✓</div>
+            <div class="w-12 h-12 mx-auto mb-3 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><rect x="2" y="8" width="20" height="10" rx="2"/><path d="M2 12h20"/><path d="M6 8V6a2 2 0 012-2h8a2 2 0 012 2v2"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm">Bedroom</h3>
+          </div>
+          <div class="multi-card option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="furniture" data-value="Dining" onclick="toggleMulti(this)">
+            <div class="check-circle w-8 h-8 mx-auto mb-3 rounded-full border-2 border-sand flex items-center justify-center text-xs font-bold text-warmgray transition-smooth">✓</div>
+            <div class="w-12 h-12 mx-auto mb-3 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><rect x="3" y="10" width="18" height="2" rx="1"/><line x1="5" y1="12" x2="5" y2="20"/><line x1="19" y1="12" x2="19" y2="20"/><line x1="5" y1="6" x2="19" y2="6"/><line x1="5" y1="4" x2="5" y2="6"/><line x1="19" y1="4" x2="19" y2="6"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm">Dining</h3>
+          </div>
+          <div class="multi-card option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="furniture" data-value="Kitchen" onclick="toggleMulti(this)">
+            <div class="check-circle w-8 h-8 mx-auto mb-3 rounded-full border-2 border-sand flex items-center justify-center text-xs font-bold text-warmgray transition-smooth">✓</div>
+            <div class="w-12 h-12 mx-auto mb-3 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="8" y1="4" x2="8" y2="12"/><line x1="16" y1="4" x2="16" y2="12"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm">Kitchen</h3>
+          </div>
+          <div class="multi-card option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="furniture" data-value="Office Furniture" onclick="toggleMulti(this)">
+            <div class="check-circle w-8 h-8 mx-auto mb-3 rounded-full border-2 border-sand flex items-center justify-center text-xs font-bold text-warmgray transition-smooth">✓</div>
+            <div class="w-12 h-12 mx-auto mb-3 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><rect x="4" y="4" width="16" height="12" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm">Office</h3>
+          </div>
+          <div class="multi-card option-card bg-white rounded-2xl p-6 text-center shadow-sm" data-field="furniture" data-value="Custom Furniture" onclick="toggleMulti(this)">
+            <div class="check-circle w-8 h-8 mx-auto mb-3 rounded-full border-2 border-sand flex items-center justify-center text-xs font-bold text-warmgray transition-smooth">✓</div>
+            <div class="w-12 h-12 mx-auto mb-3 bg-linen rounded-xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <h3 class="font-medium text-charcoal text-sm">Custom</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7: Inspiration Upload -->
+      <div class="step" data-step="7">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Inspiration</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Share your vision</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Upload Pinterest boards, room photos, or any references that inspire you.</p>
+        </div>
+        <div class="max-w-2xl mx-auto">
+          <div class="upload-area p-8 sm:p-12 text-center" id="uploadArea" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+            <div class="w-20 h-20 mx-auto mb-6 bg-linen rounded-2xl flex items-center justify-center">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <h3 class="font-playfair text-xl text-charcoal mb-2">Drop images here</h3>
+            <p class="text-warmgray text-sm mb-4">or click to browse your files</p>
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-gold/10 text-gold rounded-full text-sm font-medium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload Files
+            </div>
+          </div>
+          <div id="uploadPreviews" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-6"></div>
+        </div>
+      </div>
+
+      <!-- STEP 8: Additional Requirements -->
+      <div class="step" data-step="8">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Your Vision</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Dream big</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Tell us everything about your dream space — no detail is too small.</p>
+        </div>
+        <div class="max-w-2xl mx-auto">
+          <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm">
+            <textarea id="additionalRequirements" class="custom-textarea" placeholder="Tell us about your dream space...&#10;&#10;• What feeling do you want when you walk in?&#10;• Any must-have features?&#10;• Specific materials or textures?&#10;• Natural light preferences?&#10;• Any challenges with the current space?"></textarea>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <button onclick="addSuggestion('I want a warm, cozy atmosphere')" class="px-4 py-2 bg-linen hover:bg-sand/50 rounded-full text-xs text-warmgray hover:text-charcoal transition-smooth">Warm & Cozy</button>
+              <button onclick="addSuggestion('I prefer clean, clutter-free spaces')" class="px-4 py-2 bg-linen hover:bg-sand/50 rounded-full text-xs text-warmgray hover:text-charcoal transition-smooth">Clean & Simple</button>
+              <button onclick="addSuggestion('I want plenty of natural light')" class="px-4 py-2 bg-linen hover:bg-sand/50 rounded-full text-xs text-warmgray hover:text-charcoal transition-smooth">Natural Light</button>
+              <button onclick="addSuggestion('I love plants and greenery')" class="px-4 py-2 bg-linen hover:bg-sand/50 rounded-full text-xs text-warmgray hover:text-charcoal transition-smooth">Greenery</button>
+              <button onclick="addSuggestion('I need smart home integration')" class="px-4 py-2 bg-linen hover:bg-sand/50 rounded-full text-xs text-warmgray hover:text-charcoal transition-smooth">Smart Home</button>
+              <button onclick="addSuggestion('I want a statement art wall')" class="px-4 py-2 bg-linen hover:bg-sand/50 rounded-full text-xs text-warmgray hover:text-charcoal transition-smooth">Art Wall</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 9: Contact Information -->
+      <div class="step" data-step="9">
+        <div class="text-center mb-10">
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Almost There</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Let's connect</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto">Share your details and we'll reach out to schedule a complimentary consultation.</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm max-w-xl mx-auto">
+          <div class="input-group">
+            <input type="text" id="clientName" class="custom-input" placeholder=" " value="">
+            <label>Full Name</label>
+          </div>
+          <div class="input-group">
+            <input type="email" id="clientEmail" class="custom-input" placeholder=" " value="">
+            <label>Email Address</label>
+          </div>
+          <div class="input-group">
+            <input type="tel" id="clientPhone" class="custom-input" placeholder=" " value="">
+            <label>Phone Number</label>
+          </div>
+          <div class="input-group">
+            <input type="date" id="consultDate" class="custom-input" value="">
+            <label style="top:-10px;font-size:12px;color:#C4A265;font-weight:500;">Preferred Consultation Date</label>
+          </div>
+          <div class="mt-4 p-4 bg-linen rounded-xl">
+            <div class="flex items-start gap-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p class="text-sm text-warmgray">Your consultation is completely free. We'll discuss your vision, provide initial ideas, and outline the design journey.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUCCESS SCREEN -->
+      <div class="step" data-step="10">
+        <div class="text-center mb-10">
+          <div class="success-check w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-gold to-goldlight rounded-full flex items-center justify-center" style="opacity:0;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <p class="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-3">Thank You</p>
+          <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl text-charcoal mb-4">Your Design Brief is Ready</h2>
+          <p class="text-warmgray text-lg max-w-lg mx-auto mb-8">We've received all the details. Our design team is already envisioning your perfect space.</p>
+        </div>
+
+        <div class="summary-card max-w-xl mx-auto">
+          <div class="bg-gradient-to-r from-charcoal to-espresso p-6 sm:p-8 text-white">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-8 h-8 bg-gold/20 rounded-lg flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4A265" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+              </div>
+              <h3 class="font-playfair text-lg">Your Design Brief</h3>
+            </div>
+            <p class="text-white/50 text-xs">LUXE Interiors — Consultation Summary</p>
+          </div>
+          <div id="summaryContent">
+            <div class="summary-item flex justify-between items-center">
+              <span class="text-warmgray text-sm">Project Type</span>
+              <span class="font-medium text-charcoal text-sm" id="sumProjectType">—</span>
+            </div>
+            <div class="summary-item flex justify-between items-center">
+              <span class="text-warmgray text-sm">Design Style</span>
+              <span class="font-medium text-charcoal text-sm" id="sumDesignStyle">—</span>
+            </div>
+            <div class="summary-item flex justify-between items-center">
+              <span class="text-warmgray text-sm">Budget</span>
+              <span class="font-medium text-charcoal text-sm" id="sumBudget">—</span>
+            </div>
+            <div class="summary-item flex justify-between items-center">
+              <span class="text-warmgray text-sm">Space</span>
+              <span class="font-medium text-charcoal text-sm" id="sumSpace">—</span>
+            </div>
+            <div class="summary-item flex justify-between items-center">
+              <span class="text-warmgray text-sm">Location</span>
+              <span class="font-medium text-charcoal text-sm" id="sumLocation">—</span>
+            </div>
+            <div class="summary-item">
+              <span class="text-warmgray text-sm block mb-2">Color Palette</span>
+              <div id="sumColors" class="flex gap-1.5"></div>
+            </div>
+            <div class="summary-item">
+              <span class="text-warmgray text-sm block mb-2">Furniture Needs</span>
+              <div id="sumFurniture" class="flex flex-wrap gap-1.5"></div>
+            </div>
+          </div>
+          <div class="p-6 sm:p-8">
+            <button onclick="bookConsultation()" class="w-full py-4 bg-gradient-to-r from-gold to-goldlight text-white font-medium rounded-xl text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0">
+              Book Free Consultation
+            </button>
+            <p class="text-center text-xs text-warmgray mt-4">We'll confirm your consultation within 24 hours</p>
+          </div>
+        </div>
+
+        <div class="text-center mt-8">
+          <button onclick="resetForm()" class="text-warmgray hover:text-charcoal text-sm underline underline-offset-4 transition-smooth">
+            Start a new project
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- Navigation -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-sand/50" id="navBar">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <button id="prevBtn" class="nav-btn nav-btn-secondary px-6 py-3 rounded-xl font-medium text-sm hidden" onclick="prevStep()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline mr-1 -mt-0.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Previous
+    </button>
+    <div class="flex-1"></div>
+    <button id="nextBtn" class="nav-btn nav-btn-primary px-8 py-3 rounded-xl font-medium text-sm" onclick="nextStep()">
+      <span id="nextBtnText">Next Step</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline ml-1 -mt-0.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <button id="submitBtn" class="nav-btn nav-btn-primary px-8 py-3 rounded-xl font-medium text-sm hidden" onclick="submitQuestionnaire()">
+      Submit
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline ml-1 -mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  // State
+  let currentStep = 1;
+  const totalSteps = 9;
+  let formData = {
+    projectType: '',
+    rooms: 2,
+    areaSize: '',
+    projectLocation: '',
+    designStyle: '',
+    budget: '₹5 – 15 Lakh',
+    budgetIndex: 1,
+    colors: ['White'],
+    furniture: [],
+    uploadedFiles: [],
+    additionalRequirements: '',
+    clientName: '',
+    clientEmail: '',
+    clientPhone: '',
+    consultDate: ''
+  };
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    generateDots();
+    updateUI();
+    document.getElementById('rooms').addEventListener('change', function() {
+      formData.rooms = parseInt(this.value) || 1;
+    });
+  });
+
+  function generateDots() {
+    const container = document.getElementById('dotsContainer');
+    container.innerHTML = '';
+    for (let i = 1; i <= totalSteps; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'flex-1 flex items-center';
+      dot.innerHTML = `
+        <div class="step-dot w-3 h-3 rounded-full ${i <= 1 ? 'bg-gold active' : 'bg-sand'} transition-all duration-300 flex-shrink-0" data-dot="${i}"></div>
+        ${i < totalSteps ? '<div class="flex-1 h-0.5 bg-sand/50 mx-1"><div class="h-full bg-gold transition-all duration-500" style="width:0%" data-line="${i}"></div></div>' : ''}
+      `;
+      container.appendChild(dot);
+    }
+  }
+
+  function updateUI() {
+    // Update progress bar
+    const progress = (currentStep / totalSteps) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    // Update step counter
+    document.getElementById('stepCounter').textContent = `Step ${currentStep}`;
+
+    // Update dots
+    document.querySelectorAll('.step-dot').forEach(dot => {
+      const dotStep = parseInt(dot.dataset.dot);
+      dot.classList.remove('bg-gold', 'bg-sand', 'active');
+      if (dotStep < currentStep) {
+        dot.classList.add('bg-gold');
+      } else if (dotStep === currentStep) {
+        dot.classList.add('bg-gold', 'active');
+      } else {
+        dot.classList.add('bg-sand');
+      }
+    });
+
+    // Update lines
+    document.querySelectorAll('[data-line]').forEach(line => {
+      const lineStep = parseInt(line.dataset.line);
+      line.style.width = lineStep < currentStep ? '100%' : '0%';
+    });
+
+    // Show/hide steps
+    document.querySelectorAll('.step').forEach(step => {
+      const stepNum = parseInt(step.dataset.step);
+      if (stepNum === currentStep) {
+        step.classList.add('active');
+      } else {
+        step.classList.remove('active');
+      }
+    });
+
+    // Update navigation
+    document.getElementById('prevBtn').classList.toggle('hidden', currentStep === 1);
+    
+    const isLastStep = currentStep === totalSteps;
+    document.getElementById('nextBtn').classList.toggle('hidden', isLastStep);
+    document.getElementById('submitBtn').classList.toggle('hidden', !isLastStep);
+    document.getElementById('nextBtnText').textContent = currentStep === 1 ? 'Get Started' : 'Next Step';
+
+    // Hide nav on success
+    if (currentStep === totalSteps + 1) {
+      document.getElementById('navBar').style.display = 'none';
+    } else {
+      document.getElementById('navBar').style.display = '';
+    }
+  }
+
+  function nextStep() {
+    collectData();
+    if (currentStep < totalSteps) {
+      currentStep++;
+      updateUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      currentStep--;
+      updateUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function collectData() {
+    if (currentStep === 2) {
+      formData.rooms = parseInt(document.getElementById('rooms').value) || 2;
+      formData.areaSize = document.getElementById('areaSize').value;
+      formData.projectLocation = document.getElementById('projectLocation').value;
+    }
+    if (currentStep === 8) {
+      formData.additionalRequirements = document.getElementById('additionalRequirements').value;
+    }
+    if (currentStep === 9) {
+      formData.clientName = document.getElementById('clientName').value;
+      formData.clientEmail = document.getElementById('clientEmail').value;
+      formData.clientPhone = document.getElementById('clientPhone').value;
+      formData.consultDate = document.getElementById('consultDate').value;
+    }
+  }
+
+  function selectOption(el) {
+    const field = el.dataset.field;
+    const value = el.dataset.value;
+    
+    // Deselect siblings
+    const parent = el.parentElement;
+    parent.querySelectorAll('.option-card, .style-image-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    el.classList.add('selected');
+    formData[field] = value;
+  }
+
+  function selectBudget(el, index) {
+    const parent = el.parentElement;
+    parent.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+    el.classList.add('selected');
+    formData.budget = el.dataset.value;
+    formData.budgetIndex = index;
+    document.getElementById('budgetSlider').value = index;
+    updateBudget(index);
+  }
+
+  function updateBudget(val) {
+    const budgets = ['Under ₹5 Lakh', '₹5 – 15 Lakh', '₹15 – 30 Lakh', '₹30 – 50 Lakh', '₹50 Lakh +'];
+    const displays = ['Under ₹5 Lakh', '₹5 – 15 Lakh', '₹15 – 30 Lakh', '₹30 – 50 Lakh', '₹50 Lakh +'];
+    formData.budget = budgets[val];
+    formData.budgetIndex = parseInt(val);
+    document.getElementById('budgetDisplay').textContent = displays[val];
+
+    const cards = document.querySelectorAll('[data-field="budget"]');
+    cards.forEach((card, i) => {
+      card.classList.toggle('selected', i == val);
+    });
+  }
+
+  function selectColor(el) {
+    el.classList.toggle('selected');
+    const colorName = el.dataset.color;
+    if (el.classList.contains('selected')) {
+      if (formData.colors.length < 4) {
+        formData.colors.push(colorName);
+      } else {
+        el.classList.remove('selected');
+      }
+    } else {
+      formData.colors = formData.colors.filter(c => c !== colorName);
+    }
+    updateColorDisplay();
+  }
+
+  function updateColorDisplay() {
+    const container = document.getElementById('selectedColors');
+    if (formData.colors.length === 0) {
+      container.innerHTML = '<span class="text-warmgray text-xs">No colors selected</span>';
+      return;
+    }
+    const colorMap = {
+      'White': '#FAFAFA', 'Beige': '#E8E0D4', 'Sand': '#C4B8A0', 'Warm Gray': '#A89F94',
+      'Charcoal': '#2C2C2C', 'Espresso': '#3E3229', 'Taupe': '#8B7E6E', 'Mushroom': '#D4C8B8',
+      'Gold': '#C4A265', 'Sage': '#7B9E87', 'Steel Blue': '#6B8FA3', 'Terracotta': '#B8856C',
+      'Blush': '#D4B5A0', 'Forest': '#4A6741', 'Lavender': '#8E7CC3', 'Rust': '#C75B5B'
+    };
+    container.innerHTML = formData.colors.map(c => `
+      <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-linen rounded-full text-xs font-medium text-charcoal">
+        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: ${colorMap[c]}; ${['White','Beige','Sand'].includes(c) ? 'border: 1px solid #E8E0D4;' : ''}"></span>${c}
+        <button onclick="removeColor('${c}')" class="ml-1 text-warmgray hover:text-charcoal">&times;</button>
+      </span>
+    `).join('');
+  }
+
+  function removeColor(color) {
+    formData.colors = formData.colors.filter(c => c !== color);
+    document.querySelectorAll('.color-swatch').forEach(s => {
+      if (s.dataset.color === color) s.classList.remove('selected');
+    });
+    updateColorDisplay();
+  }
+
+  function toggleMulti(el) {
+    el.classList.toggle('selected');
+    const value = el.dataset.value;
+    if (el.classList.contains('selected')) {
+      if (!formData.furniture.includes(value)) formData.furniture.push(value);
+    } else {
+      formData.furniture = formData.furniture.filter(f => f !== value);
+    }
+  }
+
+  // File upload
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('uploadArea').classList.add('dragover');
+  }
+  function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('uploadArea').classList.remove('dragover');
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('uploadArea').classList.remove('dragover');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    addFiles(files);
+  }
+  function handleFileSelect(e) {
+    const files = Array.from(e.target.files);
+    addFiles(files);
+  }
+  function addFiles(files) {
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        formData.uploadedFiles.push({ name: file.name, url: e.target.result });
+        renderUploadPreviews();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function renderUploadPreviews() {
+    const container = document.getElementById('uploadPreviews');
+    container.innerHTML = formData.uploadedFiles.map((f, i) => `
+      <div class="relative group">
+        <img src="${f.url}" class="w-full aspect-square object-cover rounded-xl border border-sand" alt="${f.name}">
+        <button onclick="removeFile(${i})" class="absolute top-2 right-2 w-6 h-6 bg-charcoal/60 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
+        <p class="text-[10px] text-warmgray mt-1 truncate">${f.name}</p>
+      </div>
+    `).join('');
+  }
+  function removeFile(index) {
+    formData.uploadedFiles.splice(index, 1);
+    renderUploadPreviews();
+  }
+
+  // Suggestions
+  function addSuggestion(text) {
+    const ta = document.getElementById('additionalRequirements');
+    if (ta.value) {
+      ta.value += '\n• ' + text;
+    } else {
+      ta.value = '• ' + text;
+    }
+    ta.focus();
+  }
+
+  // Submit
+  function submitQuestionnaire() {
+    collectData();
+    currentStep = 10;
+    updateUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Populate summary
+    document.getElementById('sumProjectType').textContent = formData.projectType || '—';
+    document.getElementById('sumDesignStyle').textContent = formData.designStyle || '—';
+    document.getElementById('sumBudget').textContent = formData.budget || '—';
+    document.getElementById('sumSpace').textContent = formData.areaSize ? `${formData.areaSize} sq ft · ${formData.rooms} rooms` : `${formData.rooms} rooms`;
+    document.getElementById('sumLocation').textContent = formData.projectLocation || '—';
+
+    const colorMap = {
+      'White': '#FAFAFA', 'Beige': '#E8E0D4', 'Sand': '#C4B8A0', 'Warm Gray': '#A89F94',
+      'Charcoal': '#2C2C2C', 'Espresso': '#3E3229', 'Taupe': '#8B7E6E', 'Mushroom': '#D4C8B8',
+      'Gold': '#C4A265', 'Sage': '#7B9E87', 'Steel Blue': '#6B8FA3', 'Terracotta': '#B8856C',
+      'Blush': '#D4B5A0', 'Forest': '#4A6741', 'Lavender': '#8E7CC3', 'Rust': '#C75B5B'
+    };
+    document.getElementById('sumColors').innerHTML = formData.colors.map(c => `
+      <span class="inline-flex items-center gap-1 px-2 py-1 bg-linen rounded-full text-[11px] font-medium text-charcoal">
+        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${colorMap[c]};${['White','Beige','Sand'].includes(c)?'border:1px solid #E8E0D4;':''}"></span>${c}
+      </span>
+    `).join('');
+
+    document.getElementById('sumFurniture').innerHTML = formData.furniture.length > 0
+      ? formData.furniture.map(f => `<span class="px-2 py-1 bg-linen rounded-full text-[11px] font-medium text-charcoal">${f}</span>`).join('')
+      : '<span class="text-warmgray text-xs">—</span>';
+
+    // Trigger success animation
+    setTimeout(() => {
+      const check = document.querySelector('.success-check');
+      if (check) check.style.opacity = '1';
+      launchConfetti();
+    }, 300);
+  }
+
+  function bookConsultation() {
+    const btn = event.target;
+    btn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline animate-spin mr-2"><circle cx="12" cy="12" r="10" stroke-dasharray="60" stroke-dashoffset="15"/></svg>
+      Confirming...
+    `;
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = '✓ Consultation Booked!';
+      btn.style.background = 'linear-gradient(135deg, #7B9E87, #6B8F77)';
+    }, 2000);
+  }
+
+  function resetForm() {
+    currentStep = 1;
+    formData = {
+      projectType: '', rooms: 2, areaSize: '', projectLocation: '',
+      designStyle: '', budget: '₹5 – 15 Lakh', budgetIndex: 1,
+      colors: ['White'], furniture: [], uploadedFiles: [],
+      additionalRequirements: '', clientName: '', clientEmail: '',
+      clientPhone: '', consultDate: ''
+    };
+    document.querySelectorAll('.option-card, .style-image-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    document.querySelectorAll('.multi-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('rooms').value = 2;
+    document.getElementById('areaSize').value = '';
+    document.getElementById('projectLocation').value = '';
+    document.getElementById('budgetSlider').value = 1;
+    document.getElementById('budgetDisplay').textContent = '₹5 – 15 Lakh';
+    document.getElementById('additionalRequirements').value = '';
+    document.getElementById('clientName').value = '';
+    document.getElementById('clientEmail').value = '';
+    document.getElementById('clientPhone').value = '';
+    document.getElementById('consultDate').value = '';
+    document.getElementById('uploadPreviews').innerHTML = '';
+    formData.colors = ['White'];
+    const whiteSwatch = document.querySelector('.color-swatch[data-color="White"]');
+    if (whiteSwatch) whiteSwatch.classList.add('selected');
+    updateColorDisplay();
+    updateUI();
+    document.getElementById('navBar').style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function adjustValue(id, delta) {
+    const input = document.getElementById(id);
+    let val = parseInt(input.value) || 1;
+    val = Math.max(1, Math.min(50, val + delta));
+    input.value = val;
+    formData.rooms = val;
+  }
+
+  function launchConfetti() {
+    const colors = ['#C4A265', '#D4B87A', '#E8E0D4', '#FAF7F2', '#7B9E87', '#B8856C'];
+    for (let i = 0; i < 40; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      confetti.style.width = (Math.random() * 8 + 6) + 'px';
+      confetti.style.height = (Math.random() * 8 + 6) + 'px';
+      confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      confetti.style.animationDelay = (Math.random() * 1) + 's';
+      confetti.style.opacity = Math.random() * 0.7 + 0.3;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }
+  }
+</script>
+
+</body>
+</html>
